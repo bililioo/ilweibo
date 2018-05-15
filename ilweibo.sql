@@ -14,6 +14,14 @@
  Date: 15/05/2018 15:11:41
 */
 
+drop database if exists ilweibo;
+-- 建库
+'www-data';create database ilweibo;
+
+use ilweibo;
+
+grant select, insert, update, delete on ilweibo.* to 'www-data'@'localhost' identified by 
+
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
