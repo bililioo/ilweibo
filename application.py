@@ -17,6 +17,7 @@ from coroweb import add_routes, add_static
 from aiohttp import web
 from spider import search_spider
 from spider import comment_spider
+import time
 
 async def logger_factory(app, handler):
     async def logger(request):
@@ -81,7 +82,7 @@ async def init_spider():
         # await comment_spider.hot_wb()
     while True:
         await search_spider.search_weibo('卖片')
-        asyncio.sleep(3600)
+        time.sleep(3600)
 
 async def delay():
     s = random.randint(1, 5)

@@ -22,7 +22,9 @@ async def api_weibo(*, pageIndex):
         raise APIValueError('pageIndex')
 
     pageIndex = int(pageIndex) * 20
-    weibo_arr = await models.weibo.findAll(limit=(pageIndex, 20))
+    weibo_arr = await models.weibo.findAll(limit=(pageIndex, 20), orderBy='time desc')
+    for weibo in weibo_arr:
+        weibo.time = str(weibo.time)
     return {'data': weibo_arr, 'count': len(weibo_arr)}
 
 @post('/api/comments')

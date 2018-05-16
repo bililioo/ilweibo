@@ -14,6 +14,7 @@ import time
 import ssl
 from functools import reduce
 import models
+import datetime
 
 
 async def search_weibo(keyword):
@@ -86,7 +87,9 @@ async def search(keyword):
             if pic != None:
                 pic_url = pic[0].get('url')
                 
-                model = models.weibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid)
+                t = datetime.datetime.now()
+
+                model = models.weibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
                 logging.info(model)
                 await model.save()
         
