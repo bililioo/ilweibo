@@ -15,42 +15,66 @@ import time
 import ssl
 import models
 from functools import reduce
+import json
+import subprocess
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-async def hot_wb():
-    '''
-    热门微博
-    '''
+# async def hot_wb():
+#     '''
+#     热门微博
+#     '''
 
-    url = 'https://m.weibo.cn/api/container/getIndex?containerid=102803'
+#     url = 'https://m.weibo.cn/api/container/getIndex?containerid=102803'
 
-    headers = {
-        'Host': 'm.weibo.cn',
-        'Accept': 'application/json, text/plain, */*',
-        'Connection': 'keep-alive',
-        'Accept-Language': 'zh-cn',
-        'Accept-Encoding': 'br, gzip, deflate',
-        'Cookie': 'MLOGIN=1; M_WEIBOCN_PARAMS=featurecode%3D20000320%26oid%3D4237460512348275%26luicode%3D20000061%26lfid%3D4237460512348275%26fid%3D102803%26uicode%3D10000011; WEIBOCN_FROM=1110006030; H5_INDEX=2; H5_INDEX_TITLE=Bililiooo; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkN4ptz3fa8ri-Qsj0eeM1HCtWlvpVIl0_MpYHtdRRYJs.; SSOLoginState=1525919576; SUB=_2A253998IDeRhGeRN71cU9CjEwjuIHXVVG-FArDV6PUJbkdANLVPCkW1NU47RsgKuIDNjCgWCcPUbaErA3u_f0QTB; SUHB=0z1xxCzf3K2UGo; TMPTOKEN=NK0BAKjmvUlbXc7n0KVNUitHBLpqPQMxkhw9DGNHp2ShaBxPpzO6MTBFre18TSNV; _T_WM=bd324ce74a01f146dfcc272ebbbc5f45',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15' ,
-        'Referer': 'https://m.weibo.cn/p/index?containerid=102803',
-        'X-Requested-With': 'XMLHttpRequest'
-    }
+#     headers = {
+#         'Host': 'm.weibo.cn',
+#         'Accept': 'application/json, text/plain, */*',
+#         'Connection': 'keep-alive',
+#         'Accept-Language': 'zh-cn',
+#         'Accept-Encoding': 'br, gzip, deflate',
+#         'Cookie': 'MLOGIN=1; M_WEIBOCN_PARAMS=featurecode%3D20000320%26oid%3D4237460512348275%26luicode%3D20000061%26lfid%3D4237460512348275%26fid%3D102803%26uicode%3D10000011; WEIBOCN_FROM=1110006030; H5_INDEX=2; H5_INDEX_TITLE=Bililiooo; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkN4ptz3fa8ri-Qsj0eeM1HCtWlvpVIl0_MpYHtdRRYJs.; SSOLoginState=1525919576; SUB=_2A253998IDeRhGeRN71cU9CjEwjuIHXVVG-FArDV6PUJbkdANLVPCkW1NU47RsgKuIDNjCgWCcPUbaErA3u_f0QTB; SUHB=0z1xxCzf3K2UGo; TMPTOKEN=NK0BAKjmvUlbXc7n0KVNUitHBLpqPQMxkhw9DGNHp2ShaBxPpzO6MTBFre18TSNV; _T_WM=bd324ce74a01f146dfcc272ebbbc5f45',
+#         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15' ,
+#         'Referer': 'https://m.weibo.cn/p/index?containerid=102803',
+#         'X-Requested-With': 'XMLHttpRequest'
+#     }
 
-    response = requests.get(url, headers=headers)
-    tmpJson = response.json()
-    data = tmpJson['data']
-    cards = data['cards']
+#     response = requests.get(url, headers=headers)
+#     tmpJson = response.json()
+#     data = tmpJson['data']
+#     cards = data['cards']
 
-    for item in cards:
-        # 评论数超过2才加入队列中
-        comments_count = item.get('mblog').get('comments_count')
-        if comments_count >= 2:
-            try:
-                id = item.get('mblog').get('id')
-                await get_comments(id, comments_count)
-            except Exception as error:
-                logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+#     for item in cards:
+#         # 评论数超过2才加入队列中
+#         comments_count = item.get('mblog').get('comments_count')
+#         if comments_count >= 2:
+#             try:
+#                 id = item.get('mblog').get('id')
+#                 await get_comments(id, comments_count)
+#             except Exception as error:
+#                 logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+
+async def get_hot_weibo():
+
+    cmd = ''' curl -H 'Host: api.weibo.cn' -H 'X-Sessionid: 047BEA3F-E290-4316-9628-35848E4BC5F2' -H 'Content-Type: application/x-www-form-urlencoded; charset=utf-8' -H 'cronet_rid: 6428596' -H 'SNRT: normal' -H 'X-Log-Uid: 2345546897' -H 'X-Validator: oVyKhct/EWPSNnnjorVNq4dy1K4uKsxjBVlKA4dtUn8=' -H 'User-Agent: Weibo/27222 (iPhone; iOS 11.3.1; Scale/3.00)' -H 'Accept: */*' --data-binary "group_id=1028032288&extparam=discover%7Cnew_feed&fid=102803_ctg1_2288_-_ctg1_2288&lon=113.318250&uicode=10000495&count=25&trim_level=1&max_id=2&trim_page_recom=0&containerid=102803_ctg1_2288_-_ctg1_2288&fromlog=1028032288&uid=2345546897&luicode=10000001&featurecode=10000001&refresh_sourceid=10000001&lat=23.124061&lastAdInterval=-1&need_jump_scheme=1" --compressed 'https://api.weibo.cn/2/statuses/unread_hot_timeline?gsid=_2A253-VPwDeRxGeRN71cU9CjEwjuIHXVSr-A4rDV6PUJbkdAKLRDVkWpNU47Rsns5Cfo-vL5qPzjVqe10vlymoLlb&wm=3333_2001&i=ad94a29&b=0&from=1084393010&c=iphone&networktype=wifi&v_p=60&skin=default&v_f=1&s=aaaaaaaa&lang=zh_CN&sflag=1&ua=iPhone10,3__weibo__8.4.3__iphone__os11.3.1&ft=0&aid=01Am3uxcoYaVGEmHeFJ4aOVd8YJYEVuvFQiNIrDPm2ss_m5vg.'  2>/dev/null '''  
+
+    try:
+        result = json.loads(subprocess.getoutput(cmd))
+    except Exception as error:
+        logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+        return 
+
+    statuses = result.get('statuses', None)
+
+    if statuses == None:
+        return
+    
+    for item in statuses:
+        id = item.get('id')
+        comments_count = item.get('comments_count', '0')
+
+        if int(comments_count) > 10:
+            await get_comments(id, comments_count) 
 
             
 
@@ -85,12 +109,12 @@ async def get_comments(id, comments):
         response = requests.get(url, headers=headers)   
         data = response.json().get('data')
         
-        if data.get('data') != None:
+        if data.get('data', None) != None:
             for item in data.get('data'):
                 if item.get('pic'):
                     items.append(item)
 
-        if data.get('hot_data') != None:
+        if data.get('hot_data', None) != None:
             for hot_item in data.get('hot_data'):
                 if hot_item.get('pic'):
                     items.append(hot_item)
@@ -102,8 +126,11 @@ async def get_comments(id, comments):
         pic = item['pic']['url']
         text = item.get('text')
 
-        model = models.comment(id=id, name=name, pic=pic, text=text, r_uid=r_uid)
-        logging.info(model)
-        await model.save()    
+        try:
+            model = models.comment(id=id, name=name, pic=pic, text=text, r_uid=r_uid)
+            logging.info(model)
+            await model.save()    
+        except Exception as error:
+            logging.info('<<<<<<<<<<<<<<< error:%s' % error)
 
         

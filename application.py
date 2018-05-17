@@ -88,9 +88,15 @@ async def delay():
     s = random.randint(1, 5)
     await asyncio.sleep(s)
 
+async def init_spider_1():
+    while True:
+        await comment_spider.get_hot_weibo()
+        time.sleep(720)
+task = [init_spider(), init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
-loop.run_until_complete(init(loop))
+loop.run_until_complete(asyncio.wait(task))
+# loop.run_until_complete(init(loop))
 # loop.run_until_complete(init_spider())
 loop.run_forever()
