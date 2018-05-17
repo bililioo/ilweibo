@@ -38,8 +38,17 @@ async def api_comments(*, pageIndex):
     
 
 @post('/api/report')
-def aip_report(*, isWeibo, id, r_uid):
-    
+async def aip_report(*, isWeibo, **kw):
+
+    orderBy = kw.get('orderBy', None)
+    id = kw.get('id', None)
+    r_uid = kw.get('r_uid', None)
+    pic = kw.get('pic', None)
+    text = kw.get('text', None)
+    name = kw.get('name', None)
+    time = kw.get('time', None)
+    index = kw.get('index', None)
+
     url = 'http://service.account.weibo.com/aj/reportspamobile'
 
     headers = {
@@ -86,6 +95,11 @@ def aip_report(*, isWeibo, id, r_uid):
     try:
         response = requests.post(url, headers=headers, data=data)
         logging.info(response.text)
+
+        w = await models.weibo.find(index)
+        w.report = 1
+        await w.update()
+
         return response.text
     except Exception as error:
         logging.info(error)

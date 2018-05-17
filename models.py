@@ -26,3 +26,4 @@ class weibo(Model):
     id = StringField(ddl='text(200)')
     index = IntegerField(primary_key=True)
     time = StringField()
+    report = IntegerField()
