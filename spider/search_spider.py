@@ -55,7 +55,7 @@ async def search(keyword):
 
     for i in range(1, 7):
 
-        asyncio.sleep(2)
+        await asyncio.sleep(2)
 
         params = {
             'type': 'wb',

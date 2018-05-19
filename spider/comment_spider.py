@@ -48,7 +48,7 @@ async def get_comments(id, comments):
     '''
     评论
     '''
-    time.sleep(1)
+    await asyncio.sleep(2)
 
     page_count = int(comments / 10) + 1
     
