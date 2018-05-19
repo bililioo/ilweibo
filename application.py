@@ -18,6 +18,7 @@ from aiohttp import web
 from spider import search_spider
 from spider import comment_spider
 import time
+import datetime
 
 async def logger_factory(app, handler):
     async def logger(request):
@@ -77,12 +78,15 @@ async def init(loop):
     return srv
 
 async def init_spider():
-    # for i in range(1, 5):
-    #     await delay()
-        # await comment_spider.hot_wb()
+    
     while True:
-        await search_spider.search_weibo('卖片')
-        asyncio.sleep(3600)
+        t = datetime.datetime.now()
+        if t.hour > 1 and t.hour < 7:
+            asyncio.sleep(3600)
+        else:
+            await search_spider.search_weibo('卖片')
+            asyncio.sleep(3600)
+            logging.info('睡一小时')
 
 async def delay():
     s = random.randint(1, 5)
@@ -90,14 +94,18 @@ async def delay():
 
 async def init_spider_1():
     while True:
-        await comment_spider.get_hot_weibo()
-        asyncio.sleep(3)
-        logging.info('睡一下')
+        t = datetime.datetime.now()
+        if t.hour > 1 and t.hor < 7:
+            asyncio.sleep(3600)
+        else:
+            await comment_spider.get_hot_weibo()
+            asyncio.sleep(900)
+            logging.info('睡半小时')
 
-# task = [init_spider(), init_spider_1()]
+task = [init_spider(), init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
-# loop.run_until_complete(asyncio.wait(task))
-loop.run_until_complete(init(loop))
+loop.run_until_complete(asyncio.wait(task))
+# loop.run_until_complete(init(loop))
 loop.run_forever()

@@ -55,7 +55,7 @@ async def search(keyword):
 
     for i in range(1, 7):
 
-        time.sleep(2)
+        asyncio.sleep(2)
 
         params = {
             'type': 'wb',
@@ -91,9 +91,17 @@ async def search(keyword):
                 t = datetime.datetime.now()
 
                 text = re.sub(r'</?\w+[^>]*>', '', text)
-                model = models.weibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
-                logging.info(model)
-                await model.save()
+
+                if len(text) > 80:
+                    model = models.weibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
+                    logging.info(model)
+                
+                    try:
+                        await model.save()
+                    except Exception as error:
+                        logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+                else:
+                    logging.info(text)
         
 
         
