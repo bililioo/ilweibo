@@ -34,6 +34,9 @@ async def api_comments(*, pageIndex):
 
     pageIndex = int(pageIndex) * 20
     comment_arr = await models.comment.findAll(limit=(pageIndex, 20))
+    for comment in comment_arr:
+        comment.time = str(comment.time)
+
     return {'data': comment_arr, 'count': len(comment_arr)}
     
 
@@ -96,9 +99,14 @@ async def aip_report(*, isWeibo, **kw):
         response = requests.post(url, headers=headers, data=data)
         logging.info(response.text)
 
-        w = await models.weibo.find(index)
-        w.report = 1
-        await w.update()
+        if isWeibo == '1':
+            w = await models.weibo.find(index)
+            w.report = 1
+            await w.update()
+        else:
+            c = await models.comment.find(id)
+            c.report = 1
+            await c.update()
 
         return response.text
     except Exception as error:

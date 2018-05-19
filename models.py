@@ -14,6 +14,8 @@ class comment(Model):
     name = StringField(ddl='text(30)')
     r_uid = StringField(ddl='text(200)')
     id = StringField(primary_key=True, ddl='text(200)')
+    time = StringField()
+    report = IntegerField()
 
 
 class weibo(Model):

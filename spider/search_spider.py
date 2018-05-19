@@ -15,6 +15,7 @@ import ssl
 from functools import reduce
 import models
 import datetime
+import re
 
 
 async def search_weibo(keyword):
@@ -89,6 +90,7 @@ async def search(keyword):
                 
                 t = datetime.datetime.now()
 
+                text = re.sub(r'</?\w+[^>]*>', '', text)
                 model = models.weibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
                 logging.info(model)
                 await model.save()
