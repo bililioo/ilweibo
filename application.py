@@ -81,9 +81,6 @@ async def init_spider():
     
     while True:
         t = datetime.datetime.now()
-        if t.hour > 1 and t.hour < 7:
-            await asyncio.sleep(3600)
-        else:
             await search_spider.search_weibo('卖片')
             logging.info('开始睡一小时')
             await asyncio.sleep(3600)
@@ -95,7 +92,7 @@ async def delay():
 async def init_spider_1():
     while True:
         t = datetime.datetime.now()
-        if t.hour > 1 and t.hor < 7:
+        if t.hour > 1 and t.hour < 7:
             await asyncio.sleep(3600)
         else:
             await comment_spider.get_hot_weibo()
@@ -103,10 +100,10 @@ async def init_spider_1():
             await asyncio.sleep(900)
             
 
-task = [init_spider(), init_spider_1()]
+task = [init_spider()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
-# loop.run_until_complete(asyncio.wait(task))
-loop.run_until_complete(init(loop))
+loop.run_until_complete(asyncio.wait(task))
+# loop.run_until_complete(init(loop))
 loop.run_forever()
