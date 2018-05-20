@@ -33,7 +33,7 @@ async def api_comments(*, pageIndex):
         raise APIValueError('pageIndex')
 
     pageIndex = int(pageIndex) * 20
-    comment_arr = await models.comment.findAll(limit=(pageIndex, 20))
+    comment_arr = await models.comment.findAll(limit=(pageIndex, 20), orderBy='time desc')
     for comment in comment_arr:
         comment.time = str(comment.time)
 
