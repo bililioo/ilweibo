@@ -99,10 +99,10 @@ async def init_spider_1():
             await asyncio.sleep(3600)
             
 
-task = [init_spider_1(), init_spider()]
+task = [init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
-# loop.run_until_complete(asyncio.wait(task))
-loop.run_until_complete(init(loop))
+loop.run_until_complete(asyncio.wait(task))
+# loop.run_until_complete(init(loop))
 loop.run_forever()

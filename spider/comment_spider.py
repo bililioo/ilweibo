@@ -121,6 +121,11 @@ async def get_comments(id, comments):
                 if hot_item.get('pic'):
                     items.append(hot_item)
     
+    if len(item) == 0:
+        logging.info('------------没有图片评论')
+    else:
+        logging.info('------------图片评论有%s条' % len(item))
+
     for item in items:
         id = item.get('id')
         r_uid = item.get('user').get('id')
