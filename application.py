@@ -78,12 +78,11 @@ async def init(loop):
     return srv
 
 async def init_spider():
-    
     while True:
         t = datetime.datetime.now()
-            await search_spider.search_weibo('卖片')
-            logging.info('开始睡一小时')
-            await asyncio.sleep(3600)
+        await search_spider.search_weibo('卖片')
+        logging.info('开始睡一小时: %s' % str(t))
+        await asyncio.sleep(3600)
 
 async def delay():
     s = random.randint(1, 5)
@@ -96,11 +95,11 @@ async def init_spider_1():
             await asyncio.sleep(3600)
         else:
             await comment_spider.get_hot_weibo()
-            logging.info('开始睡半小时')
-            await asyncio.sleep(900)
+            logging.info('评论-------开始睡一小时: %s' % str(t))
+            await asyncio.sleep(3600)
             
 
-task = [init_spider()]
+task = [init_spider_1(), init_spider()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
