@@ -96,10 +96,10 @@ async def init_spider_1():
         else:
             await comment_spider.get_hot_weibo()
             logging.info('评论-------开始睡1.5小时: %s' % str(t))
-            await asyncio.sleep(5400)
+            # await asyncio.sleep(5400)
             
 
-task = [init_spider_1(), init_spider()]
+task = [init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
