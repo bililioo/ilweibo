@@ -6,6 +6,13 @@ import jieba
 from collections import Counter  
 import datetime
 import asyncio
+import datetime
+
+a = {'id': 4242558727234108, 'name': '无敌毅霸霸', 'pic': 'https://wx4.sinaimg.cn/orj360/006ol12Mgy1frkc912yfhj30k00zk41q.jpg', 'text': '这个不错，si ', 'r_uid': 5856437960, 'time': datetime.datetime(2018, 5, 23, 12, 15, 49, 718408)}
+b = [a, a, a, a]
+
+print("%s" % len(b))
+print(len(b))
 
 def get_words(txt):  
     seg_list = jieba.cut(txt)  

@@ -40,7 +40,7 @@ async def get_hot_weibo():
         fs = json.loads(subprocess.getoutput(friendship1))
         await get_weibo(response)
 
-        # await asyncio.sleep(300)
+        await asyncio.sleep(300)
 
         response2 = json.loads(subprocess.getoutput(statuses2))
         unread = json.loads(subprocess.getoutput(unread_count))
@@ -70,7 +70,7 @@ async def get_weibo(response):
 
         if int(comments_count) > 10:
             await get_comments(id, comments_count) 
-            # await asyncio.sleep(60)
+            await asyncio.sleep(60)
             
 
 async def get_comments(id, comments):
@@ -102,7 +102,7 @@ async def get_comments(id, comments):
         if page > 3:
             return
 
-        # await asyncio.sleep(15)
+        await asyncio.sleep(10)
         url = 'https://m.weibo.cn/api/comments/show?id=%s&page=%s' % (id, page)
         logging.info('当前评论页：%s' % url)
         response = requests.get(url, headers=headers)   
@@ -124,7 +124,7 @@ async def get_comments(id, comments):
     if len(items) == 0:
         logging.info('------------没有图片评论')
     else:
-        logging.info('------------图片评论有%d条' % len(item))
+        logging.info('------------图片评论有%d条' % len(items))
 
     for item in items:
         id = item.get('id')
