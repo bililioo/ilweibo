@@ -142,5 +142,3 @@ async def get_comments(id, comments):
             await model.save()    
         except Exception as error:
             logging.info('<<<<<<<<<<<<<<< error:%s' % error)
-
-        
