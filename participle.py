@@ -7,12 +7,103 @@ from collections import Counter
 import datetime
 import asyncio
 import datetime
+import functools
 
-a = {'id': 4242558727234108, 'name': '无敌毅霸霸', 'pic': 'https://wx4.sinaimg.cn/orj360/006ol12Mgy1frkc912yfhj30k00zk41q.jpg', 'text': '这个不错，si ', 'r_uid': 5856437960, 'time': datetime.datetime(2018, 5, 23, 12, 15, 49, 718408)}
-b = [a, a, a, a]
 
-print("%s" % len(b))
-print(len(b))
+class A(object):
+    @property
+    def birth(self):
+        return self._birth
+
+    @birth.setter
+    def birth(self, value):
+        self._birth = value
+
+    def __init__(self, birth):
+        self.birth = birth
+
+class CallTimesLimit(object):
+    def __init__(self, max):
+        print('init CallTimesLimit')
+        self.__max = max
+        self.__count = 0
+
+    def __call__(self, fun):
+        print("call __call__")
+        self.__fun = fun
+        return self.__proxy
+
+    def __proxy(self, *args, **kwargs):
+        print("proxy")
+        self.__count += 1
+        if self.__count > self.__max:
+            print('adsfasdfasdf')
+            raise Exception("{f} is called over {limit} times".format(f=self.__fun.__name__,
+                                                                      limit=self.__max))
+        else:
+            self.__fun(*args, **kwargs)
+
+
+import types
+from functools import wraps
+
+class Profiled:
+    def __init__(self, func):
+        wraps(func)(self)
+        self.ncalls = 0
+
+    def __call__(self, *args, **kwargs):
+        self.ncalls += 1
+        return self.__wrapped__(*args, **kwargs)
+
+    def __get__(self, instance, cls):
+        if instance is None:
+            return self
+        else:
+            return types.MethodType(self, instance)
+
+@Profiled
+def add(x, y):
+    return x + y
+
+
+
+# @CallTimesLimit(3)
+# def foo(x):
+#     for a in range(10):
+#         # @CallTimesLimit(3)
+#         print(x)
+
+def get(path):
+    '''
+    Define decorator @get('/path')
+    '''
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kw):
+            print('%s %s():' % (path, func.__name__))
+            return func(*args, **kw)
+        return wrapper
+    return decorator
+
+
+if __name__ == '__main__':
+    add(3, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    add(5, 3)
+    print(add.ncalls)
+#     foo(2)
+#     foo(2)
+#     foo(2)
+#     foo(2)
+#     foo(2)
 
 def get_words(txt):  
     seg_list = jieba.cut(txt)  
@@ -24,15 +115,16 @@ def get_words(txt):
     for (k,v) in c.most_common(100):  
         print('%s  %d' % (k, v)) 
 
+@get('sdaf')
 async def a():
     while True:
         print("睡十秒")
-        await asyncio.sleep(10)
+        await asyncio.sleep(1)
 
 async def b():
     while True:
         print("睡两秒")
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
 
 task = [a(), b()]
 

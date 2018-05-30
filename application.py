@@ -17,6 +17,8 @@ from coroweb import add_routes, add_static
 from aiohttp import web
 from spider import search_spider
 from spider import comment_spider
+from spider import friends_spider
+from spider import customSearch_spider
 import time
 import datetime
 
@@ -78,6 +80,7 @@ async def init(loop):
     return srv
 
 async def init_spider():
+
     while True:
         t = datetime.datetime.now()
         await search_spider.search_weibo('卖片')
@@ -95,11 +98,15 @@ async def init_spider_1():
             await asyncio.sleep(3600)
         else:
             await comment_spider.get_hot_weibo()
+            await friends_spider.get_friends()
             logging.info('评论-------开始睡1小时: %s' % str(t))
             await asyncio.sleep(3600)
             
+async def init_custom_spider():
+    await customSearch_spider.search_weibo('溦信')
 
-task = [init_spider(), init_spider_1()]
+
+task = [init_custom_spider(), init_spider(), init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
