@@ -9,5 +9,12 @@ configs = {
         # 'host': '10.1.52.163', 
         # 'host': '192.168.1.104',
     },
+    # 'db': {
+    #     'host': '111.230.252.244',
+    #     'port': 3306,
+    #     'user': 'root',
+    #     'password': 'Bunchan16',
+    #     'database': 'ilweibo'
+    # },
 }
 

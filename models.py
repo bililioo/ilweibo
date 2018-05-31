@@ -33,7 +33,7 @@ class weibo(Model):
 class customWeibo(Model):
     __table__ = 'customWeibo'
 
-    pic = StringField(ddl='text(200)')
+    pic = StringField(ddl='text()')
     text = StringField(ddl='text(300)')
     name = StringField(ddl='text(30)')
     r_uid = StringField(ddl='text(200)')

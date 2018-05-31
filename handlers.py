@@ -16,6 +16,17 @@ from datetime import datetime
 import models
 import requests
 
+@post('/api/customweibo')
+async def api_custom_weibo(*, pageIndex):
+    if not pageIndex or not pageIndex.strip():
+        raise APIValueError('pageIndex')
+
+    pageIndex = int(pageIndex) * 20
+    weibo_arr = await models.customWeibo.findAll(limit=(pageIndex, 20), orderBy='time desc')
+    for item in weibo_arr:
+        item.time = str(item.time)
+    return {'data': weibo_arr, 'count': len(weibo_arr)}
+
 @post('/api/weibo')
 async def api_weibo(*, pageIndex):
     if not pageIndex or not pageIndex.strip():
@@ -51,6 +62,7 @@ async def aip_report(*, isWeibo, **kw):
     name = kw.get('name', None)
     time = kw.get('time', None)
     index = kw.get('index', None)
+    database_name = kw.get('db', None)
 
     url = 'http://service.account.weibo.com/aj/reportspamobile'
 
@@ -62,7 +74,7 @@ async def aip_report(*, isWeibo, **kw):
         'Connection': 'keep-alive', 
         'Accept-Language': 'zh-cn',
         'Accept-Encoding': 'gzip, deflate',
-        'Cookie': 'SER=usrmdinst_7; ALF=1528523211; SUB=_2A25396ybDeRhGeRN71cU9CjEwjuIHXVVGzTTrDV8PUJbkNBeLWPykW1NU47RsmJVZMKE0v4PAxEfDF2Ls82BAcrL; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5JpX5oz75NHD95QEe0BfSKBc1h.NWs4DqcjiBJLjIgpDdcva; ULV=1525919228138:18:2:2:6036951897751.944.1525919228069:1525916780738; SUHB=0z1xxCzf3K2UGo; wvr=6; UOR=,,www.arefly.com; SCF=As0BWSjh1dAM17WuhXQaESX4L8LgKvwxiXvNhF2dEwfOcPSIavRa7P7yrrX2T_BGc_SDA-z1wQeIb0q3rTEV-6U.; SINAGLOBAL=5033181860449.794.1490265215741',
+        'Cookie': 'SER=usrmdinst_6; SCF=An2bXdnAk8cjcDqTfmO7GGLsRKoz8iTLfjzcqWLoSn2Qp_ISyWZlwvbPULu6yBm-Kw..; SUB=_2A253-9ocDeRhGeRN71cU9CjEwjuIHXVVVoBUrDV8PUJbitANLVbgkWtNU47Rsky_qswzHE61wRLGITEA9t1-e6jd; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5NHD95QEe0BfSKBc1h.NWs4DqcjMi--NiK.Xi-2Ri--ciKnRi-zNeoeXSK-XSon4S7tt; SUHB=0YhgYlh4Es0Htq',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
         'Referer': 'http://service.account.weibo.com/reportspamobile?rid=4238111540751113&type=2&from=20000',
         'Content-Length': '128',
@@ -100,9 +112,14 @@ async def aip_report(*, isWeibo, **kw):
         logging.info(response.text)
 
         if isWeibo == '1':
-            w = await models.weibo.find(index)
-            w.report = 1
-            await w.update()
+            if database_name == 'weibo':
+                w = await models.weibo.find(index)
+                w.report = 1
+                await w.update()
+            else: 
+                cw = await models.customWeibo.find(index)
+                cw.report = 1
+                await cw.update()
         else:
             c = await models.comment.find(id)
             c.report = 1

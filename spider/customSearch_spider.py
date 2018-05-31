@@ -19,10 +19,10 @@ import re
 
 
 async def search_weibo(keyword):
-    # try:
-    await search(keyword)
-    # except Exception as error:
-        # logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+    try:
+        await search(keyword)
+    except Exception as error:
+        logging.info('<<<<<<<<<<<<<<< error:%s' % error)
     
 
 async def search(keyword):
@@ -53,7 +53,7 @@ async def search(keyword):
 
     weibo_url = 'https://m.weibo.cn/api/container/getIndex'
 
-    for i in range(1, 26):
+    for i in range(1, 25):
 
         await asyncio.sleep(2)
 
@@ -87,27 +87,29 @@ async def search(keyword):
             id = mblog.get('id')
             name = mblog.get('user').get('screen_name')
             r_uid = mblog.get('user').get('id')
-            text = mblog.get('text')
-            pic = mblog.get('pics')
-            if pic != None:
-                pic_url = pic[0].get('url')
-                
-                t = datetime.datetime.now()
+            text = mblog.get('text', '')
+            pics = mblog.get('pics', [])
 
-                text = re.sub(r'</?\w+[^>]*>', '', text)
+            t = datetime.datetime.now()
+            text = re.sub(r'</?\w+[^>]*>', '', text)
 
-                if text.count('如果出现异常') == 1:
-                    model = models.customWeibo(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
-                    logging.info(model)
-                
-                    try:
-                        await model.save()
-                    except Exception as error:
-                        logging.info('<<<<<<<<<<<<<<< error:%s' % error)
-                else:
-                    logging.info(text)
+            pic_arr = []
+            for pic in pics:
+                pic_url = pic.get('url', None)
+                if pic_url != None:
+                    pic_arr.append(pic_url)
+
+            if len(pic_arr) == 0:
+                return 
+
+            pic_str = ','.join(pic_arr)
+
+            model = models.customWeibo(id=id, name=name, pic=pic_str, text=text, r_uid=r_uid, time=t)
+            logging.info(model)
         
-
-        
+            try:
+                await model.save()
+            except Exception as error:
+                logging.info('<<<<<<<<<<<<<<< error:%s' % error)
     
 
