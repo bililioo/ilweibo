@@ -133,3 +133,13 @@ async def aip_report(*, isWeibo, **kw):
         logging.info(error)
         return {"code" : "500","msg" : "程序错误"} 
     
+
+@post('/api/delete')
+async def api_delete(*, index, db):
+    if db == 'weibo':
+        wb = await models.weibo.find(index)
+        await models.weibo.remove(wb)
+
+        return {'msg': '删除成功'}
+    else:
+        return {'msg': '删除失败'}

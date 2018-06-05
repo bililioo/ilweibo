@@ -97,16 +97,17 @@ async def init_spider_1():
         if t.hour > 1 and t.hour < 7:
             await asyncio.sleep(3600)
         else:
-            await comment_spider.get_hot_weibo()
+            # await comment_spider.get_hot_weibo()
             await friends_spider.get_friends()
             logging.info('评论-------开始睡1小时: %s' % str(t))
             await asyncio.sleep(3600)
             
 async def init_custom_spider():
-    await customSearch_spider.search_weibo('温婉视频')
-    await customSearch_spider.search_weibo('溦信')
+    pass
+    # await customSearch_spider.search_weibo('温婉视频')
+    # await customSearch_spider.search_weibo('溦信')
 
-# task = [init_custom_spider()]
+# task = [init_spider_1()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
