@@ -22,7 +22,7 @@ async def api_custom_weibo(*, pageIndex):
         raise APIValueError('pageIndex')
 
     pageIndex = int(pageIndex) * 20
-    weibo_arr = await models.customWeibo.findAll(limit=(pageIndex, 20), orderBy='time desc')
+    weibo_arr = await models.customWeibo.findAll(limit=(pageIndex, 20), orderBy='time desc', where='report = 0')
     for item in weibo_arr:
         item.time = str(item.time)
     return {'data': weibo_arr, 'count': len(weibo_arr)}
@@ -109,22 +109,25 @@ async def aip_report(*, isWeibo, **kw):
 
     try:
         response = requests.post(url, headers=headers, data=data)
-        logging.info(response.text)
-
-        if isWeibo == '1':
-            if database_name == 'weibo':
-                w = await models.weibo.find(index)
-                w.report = 1
-                await w.update()
-            else: 
-                cw = await models.customWeibo.find(index)
-                cw.report = 1
-                await cw.update()
-        else:
-            c = await models.comment.find(id)
-            c.report = 1
-            await c.update()
-
+        
+        result = response.json()
+        logging.info(result)
+        if result['code'] == '100000' or '100003':
+            if isWeibo == '1':
+                if database_name == 'weibo':
+                    w = await models.weibo.find(index)
+                    w.report = 1
+                    await w.update()
+                else: 
+                    cw = await models.customWeibo.find(index)
+                    cw.report = 1
+                    await cw.update()
+            else:
+                c = await models.comment.find(id)
+                c.report = 1
+                await c.update()
+            
+        # logging.info(response.text.encode('utf-8').decode('unicode_escape'))
         return response.text
     except Exception as error:
         logging.info(error)
