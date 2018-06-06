@@ -17,22 +17,24 @@ import json
 import subprocess
 import re
 import datetime
+import os
 
 ssl._create_default_https_context = ssl._create_unverified_context
 
-
 async def get_friends(next_cursor=None):
 
-    with open('/Users/chenbin/myCode/Python/爬虫项目/ilweibo/spider/frequency.txt', 'r') as f:
+    frequency_path = os.getcwd() + '/frequency.txt'
+
+    with open(frequency_path, 'r') as f:
         # print(f.read())
         times = int(f.read())
 
     if times < 3:
         times += 1
-        with open('/Users/chenbin/myCode/Python/爬虫项目/ilweibo/spider/frequency.txt', 'w') as f:
+        with open(frequency_path, 'w') as f:
             f.write('{0}'.format(times))
     else: 
-        with open('/Users/chenbin/myCode/Python/爬虫项目/ilweibo/spider/frequency.txt', 'w') as f:
+        with open(frequency_path, 'w') as f:
             f.write('0')
         return
 
