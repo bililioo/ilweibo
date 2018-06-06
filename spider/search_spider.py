@@ -19,10 +19,10 @@ import re
 
 
 async def search_weibo(keyword):
-    try:
-        await search(keyword)
-    except Exception as error:
-        logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+    # try:
+    await search(keyword)
+    # except Exception as error:
+    #     logging.info('<<<<<<<<<<<<<<< error:%s' % error)
     
 
 async def search(keyword):
