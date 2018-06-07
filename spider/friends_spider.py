@@ -23,13 +23,13 @@ ssl._create_default_https_context = ssl._create_unverified_context
 
 async def get_friends(next_cursor=None):
 
-    frequency_path = os.getcwd() + '/frequency.txt'
+    frequency_path = os.getcwd() + '/spider/frequency.txt'
 
     with open(frequency_path, 'r') as f:
         # print(f.read())
         times = int(f.read())
 
-    if times < 3:
+    if times < 5:
         times += 1
         with open(frequency_path, 'w') as f:
             f.write('{0}'.format(times))
