@@ -76,7 +76,7 @@ async def search(keyword):
         cards = data.get('cards')
 
         if len(cards) < 1:
-            return 
+            continue 
 
         card = cards[0]
         card_group = card.get('card_group')
@@ -100,7 +100,7 @@ async def search(keyword):
                     pic_arr.append(pic_url)
 
             if len(pic_arr) == 0:
-                return 
+                continue 
 
             pic_str = ','.join(pic_arr)
 

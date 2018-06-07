@@ -108,11 +108,12 @@ async def init_custom_spider():
     while True:
         await customSearch_spider.search_weibo('温婉视频')
         await customSearch_spider.search_weibo('溦信')
-        await customSearch_spider.search_weibo('百度')
+        await customSearch_spider.search_weibo('云 115')
+        t = datetime.datetime.now()
         logging.info('自定义检索-------开始睡8个小时: %s' % str(t))
         await asyncio.sleep(28800)
 
-task = [init_spider(), init_custom_spider(), init_spider_1(), init_spider_2()]
+task = [init_custom_spider(), init_custom_spider(), init_spider_1(), init_spider_2()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))

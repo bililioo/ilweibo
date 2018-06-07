@@ -109,7 +109,7 @@ async def get_comments(id, comments):
         data = response.json().get('data', None)
 
         if data == None:
-            return 
+            continue 
         
         if data.get('data', None) != None:
             for item in data.get('data'):
