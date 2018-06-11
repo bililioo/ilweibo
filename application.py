@@ -113,7 +113,8 @@ async def init_custom_spider():
         logging.info('自定义检索-------开始睡8个小时: %s' % str(t))
         await asyncio.sleep(28800)
 
-task = [init_custom_spider(), init_custom_spider(), init_spider_1(), init_spider_2()]
+# task = [init_custom_spider(), init_custom_spider(), init_spider_1(), init_spider_2()]
+task = [init_spider()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))

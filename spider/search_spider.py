@@ -53,7 +53,7 @@ async def search(keyword):
 
     weibo_url = 'https://m.weibo.cn/api/container/getIndex'
 
-    for i in range(1, 7):
+    for i in range(1, 8):
 
         await asyncio.sleep(2)
 
