@@ -57,12 +57,15 @@ def get_search(word):
 
     data = json_dict.get('data')
     pic_list = data.get('pic_list')
-    print(pic_list)
+    print(len(pic_list))
 
     for pic in pic_list:
         mid = pic.get('mid')
         url = pic.get('url')
         text = pic.get('text')
+
+        if len(url) > 0:
+            url = url[2:]
         text = re.sub(r'</?\w+[^>]*>', '', text)
 
         user = pic.get('user')
@@ -73,7 +76,7 @@ def get_search(word):
         t = datetime.datetime.now()
         
         if len(text) > 80:
-            model = models.pc_search(id=id, name=name, pic=pic_url, text=text, r_uid=r_uid, time=t)
+            model = models.pc_search(id=mid, name=name, pic=pic_url, text=text, r_uid=id, time=t)
             logging.info(model)
 
         try:
