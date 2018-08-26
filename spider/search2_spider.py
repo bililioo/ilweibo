@@ -13,7 +13,7 @@ import urllib
 import re
 import models
 
-def get_search(word):
+async def get_search(word):
 #     curl 'http://s.weibo.com/ajax/pic/list?search=%2525E5%25258D%252596%2525E7%252589%252587&page=3&_t=0&__rnd=1528685316536' \
 # -XGET \
 # -H 'Content-Type: application/x-www-form-urlencoded' \
@@ -35,7 +35,7 @@ def get_search(word):
     word = urllib.parse.quote(word)
     word = urllib.parse.quote(word)
 
-    url = 'http://s.weibo.com/ajax/pic/list?search=%s&page=3&_t=0&__rnd=%s' % (word, a)
+    url = 'http://s.weibo.com/ajax/pic/list?search=%s&page=1&_t=0&__rnd=%s' % (word, a)
 
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -76,13 +76,14 @@ def get_search(word):
         t = datetime.datetime.now()
         
         if len(text) > 80:
-            model = models.pc_search(id=mid, name=name, pic=pic_url, text=text, r_uid=id, time=t)
+            model = models.pc_search(id=mid, name=name, pic=url, text=text, r_uid=id, time=t)
             logging.info(model)
 
-        try:
-            model.save()
-        except Exception as error:
-            logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+            try:
+                await model.save()
+                logging.info('<<<<<<<<<<<<<<< insert success')
+            except Exception as error:
+                logging.info('<<<<<<<<<<<<<<< error:%s' % error)
         else:
             logging.info(text)
 
