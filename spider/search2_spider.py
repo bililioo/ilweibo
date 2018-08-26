@@ -12,6 +12,7 @@ import json
 import urllib
 import re
 import models
+import asyncio
 
 async def get_search(word):
 #     curl 'http://s.weibo.com/ajax/pic/list?search=%2525E5%25258D%252596%2525E7%252589%252587&page=3&_t=0&__rnd=1528685316536' \
@@ -35,57 +36,62 @@ async def get_search(word):
     word = urllib.parse.quote(word)
     word = urllib.parse.quote(word)
 
-    url = 'http://s.weibo.com/ajax/pic/list?search=%s&page=1&_t=0&__rnd=%s' % (word, a)
+    for i in range(1, 8):
 
-    headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'Host': 's.weibo.com',
-        'Accept': '*/*',
-        'Connection': 'keep-alive',
-        'Accept-Language': 'zh-cn',
-        'Accept-Encoding': 'gzip, deflate',
-        'Cookie': 'SER=usrmdinst_11; ALF=1536201481; SUB=_2A252bXZZDeRhGeRN71cU9CjEwjuIHXVVrhoRrDV8PUJbkNBeLXjzkW1NU47RspmcO_jyF4qc7JXHdpeLTppnYG6d; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5JpX5oz75NHD95QEe0BfSKBc1h.NWs4DqcjiBJLjIgpDdcva; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkvEkS3EhB7Foma3DglyzaOwFK7o4InHdSLeSNN0grEZA.; SSOLoginState=1533609392; SUHB=0XDUe5Y3FggPHT; Apache=2517535631562.909.1533609384217; ULV=1533609384222:4:2:2:2517535631562.909.1533609384217:1533609232387; _s_tentry=-; UOR=,,login.sina.com.cn; wvr=6; SINAGLOBAL=4189798176388.675.1528685080650',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.1 Safari/605.1.15',
-        'Referer': 'http://s.weibo.com/pic/%s&Refer=weibo_pic' % word,
-        'X-Requested-With': 'XMLHttpRequest',
-    }
+        await asyncio.sleep(2)
 
-    response = requests.get(url, headers=headers)
-    
-    json_dict = response.json()
-
-    data = json_dict.get('data')
-    pic_list = data.get('pic_list')
-    print(len(pic_list))
-
-    for pic in pic_list:
-        mid = pic.get('mid')
-        url = pic.get('url')
-        text = pic.get('text')
-
-        if len(url) > 0:
-            url = url[2:]
-        text = re.sub(r'</?\w+[^>]*>', '', text)
-
-        user = pic.get('user')
-        id = user.get('id')
-        name = user.get('name')
-        time = user.get('created_at')
-
-        t = datetime.datetime.now()
+        url = 'http://s.weibo.com/ajax/pic/list?search=%s&page=%s&_t=0&__rnd=%s' % (word, i, a)
+        logging.info('当前url：：：：：%s', url)
         
-        if len(text) > 80:
-            model = models.pc_search(id=mid, name=name, pic=url, text=text, r_uid=id, time=t)
-            logging.info(model)
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Host': 's.weibo.com',
+            'Accept': '*/*',
+            'Connection': 'keep-alive',
+            'Accept-Language': 'zh-cn',
+            'Accept-Encoding': 'gzip, deflate',
+            'Cookie': 'SER=usrmdinst_11; ALF=1536201481; SUB=_2A252bXZZDeRhGeRN71cU9CjEwjuIHXVVrhoRrDV8PUJbkNBeLXjzkW1NU47RspmcO_jyF4qc7JXHdpeLTppnYG6d; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5JpX5oz75NHD95QEe0BfSKBc1h.NWs4DqcjiBJLjIgpDdcva; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkvEkS3EhB7Foma3DglyzaOwFK7o4InHdSLeSNN0grEZA.; SSOLoginState=1533609392; SUHB=0XDUe5Y3FggPHT; Apache=2517535631562.909.1533609384217; ULV=1533609384222:4:2:2:2517535631562.909.1533609384217:1533609232387; _s_tentry=-; UOR=,,login.sina.com.cn; wvr=6; SINAGLOBAL=4189798176388.675.1528685080650',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_5) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1.1 Safari/605.1.15',
+            'Referer': 'http://s.weibo.com/pic/%s&Refer=weibo_pic' % word,
+            'X-Requested-With': 'XMLHttpRequest',
+        }
 
-            try:
-                await model.save()
-                logging.info('<<<<<<<<<<<<<<< insert success')
-            except Exception as error:
-                logging.info('<<<<<<<<<<<<<<< error:%s' % error)
-        else:
-            logging.info(text)
+        response = requests.get(url, headers=headers)
+        
+        json_dict = response.json()
+
+        data = json_dict.get('data')
+        pic_list = data.get('pic_list')
+        print(len(pic_list))
+
+        for pic in pic_list:
+            mid = pic.get('mid')
+            url = pic.get('url')
+            text = pic.get('text')
+
+            if len(url) > 0:
+                url = url[2:]
+            text = re.sub(r'</?\w+[^>]*>', '', text)
+
+            user = pic.get('user')
+            id = user.get('id')
+            name = user.get('name')
+            time = user.get('created_at')
+
+            t = datetime.datetime.now()
+            
+            if len(text) > 80:
+                model = models.pc_search(id=mid, name=name, pic=url, text=text, r_uid=id, time=t)
+                logging.info(model)
+
+                try:
+                    await model.save()
+                    logging.info('<<<<<<<<<<<<<<< insert success')
+                except Exception as error:
+                    logging.info('<<<<<<<<<<<<<<< error:%s' % error)
+            else:
+                logging.info(text)
 
 
 # if __name__ == '__main__':  
