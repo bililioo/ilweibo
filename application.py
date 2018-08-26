@@ -19,6 +19,7 @@ from spider import search_spider
 from spider import comment_spider
 from spider import friends_spider
 from spider import customSearch_spider
+from spider import search2_spider
 import time
 import datetime
 
@@ -82,7 +83,8 @@ async def init(loop):
 async def init_spider():
     while True:
         t = datetime.datetime.now()
-        await search_spider.search_weibo('卖片')
+        # await search_spider.search_weibo('卖片')
+        await search2_spider.get_search('卖片')
         logging.info('卖片=开始睡一小时: %s' % str(t))
         await asyncio.sleep(3600)
 
