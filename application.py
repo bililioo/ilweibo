@@ -83,8 +83,17 @@ async def init(loop):
 async def init_spider():
     while True:
         t = datetime.datetime.now()
+        await search_spider.search_weibo('卖片')
+        await search_spider.search_weibo('115会员')
+        logging.info('卖片=开始睡一小时: %s' % str(t))
+        await asyncio.sleep(3600)
+
+async def init_pc_spider():
+    while True:
+        t = datetime.datetime.now()
         # await search_spider.search_weibo('卖片')
         await search2_spider.get_search('卖片')
+        await search2_spider.get_search('115会员')
         logging.info('卖片=开始睡一小时: %s' % str(t))
         await asyncio.sleep(3600)
 
@@ -116,7 +125,7 @@ async def init_custom_spider():
         await asyncio.sleep(28800)
 
 # task = [init_custom_spider(), init_custom_spider(), init_spider_1(), init_spider_2()]
-task = [init_spider()]
+task = [init_spider(), init_pc_spider()]
 
 loop = asyncio.get_event_loop()
 loop.run_until_complete(init_sql(loop))
