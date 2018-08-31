@@ -27,14 +27,26 @@ async def api_custom_weibo(*, pageIndex):
         item.time = str(item.time)
     return {'data': weibo_arr, 'count': len(weibo_arr)}
 
-@post('/api/weibo')
-async def api_weibo(*, pageIndex):
+@post('/api/pcSearch')
+async def api_pcSearch(*, pageIndex):
     if not pageIndex or not pageIndex.strip():
         raise APIValueError('pageIndex')
 
     pageIndex = int(pageIndex) * 20
     # weibo_arr = await models.weibo.findAll(limit=(pageIndex, 20), orderBy='time desc', where='report = 0')
     weibo_arr = await models.pc_search.findAll(limit=(pageIndex, 20), orderBy='time desc', where='report = 0')
+    for weibo in weibo_arr:
+        weibo.time = str(weibo.time)
+    return {'data': weibo_arr, 'count': len(weibo_arr)}
+
+@post('/api/weibo')
+async def api_weibo(*, pageIndex):
+    if not pageIndex or not pageIndex.strip():
+        raise APIValueError('pageIndex')
+
+    pageIndex = int(pageIndex) * 20
+    weibo_arr = await models.weibo.findAll(limit=(pageIndex, 20), orderBy='time desc', where='report = 0')
+    # weibo_arr = await models.pc_search.findAll(limit=(pageIndex, 20), orderBy='time desc', where='report = 0')
     for weibo in weibo_arr:
         weibo.time = str(weibo.time)
     return {'data': weibo_arr, 'count': len(weibo_arr)}
@@ -75,7 +87,7 @@ async def aip_report(*, isWeibo, **kw):
         'Connection': 'keep-alive', 
         'Accept-Language': 'zh-cn',
         'Accept-Encoding': 'gzip, deflate',
-        'Cookie': 'SER=usrmdinst_11; ALF=1536201481; SUB=_2A252bXZZDeRhGeRN71cU9CjEwjuIHXVVrhoRrDV8PUJbkNBeLXjzkW1NU47RspmcO_jyF4qc7JXHdpeLTppnYG6d; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5JpX5oz75NHD95QEe0BfSKBc1h.NWs4DqcjiBJLjIgpDdcva; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkvEkS3EhB7Foma3DglyzaOwFK7o4InHdSLeSNN0grEZA.; SSOLoginState=1533609392; SUHB=0XDUe5Y3FggPHT; Apache=2517535631562.909.1533609384217; ULV=1533609384222:4:2:2:2517535631562.909.1533609384217:1533609232387; _s_tentry=-; UOR=,,login.sina.com.cn; wvr=6; SINAGLOBAL=4189798176388.675.1528685080650',
+        'Cookie': 'SER=usrmdinst_10; Apache=422752374481.39215.1535721645090; ULV=1535721645100:6:4:2:422752374481.39215.1535721645090:1535269160919; _s_tentry=-; wvr=6; ALF=1536201481; SUB=_2A252bXZZDeRhGeRN71cU9CjEwjuIHXVVrhoRrDV8PUJbkNBeLXjzkW1NU47RspmcO_jyF4qc7JXHdpeLTppnYG6d; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWr61b0KdPzp7BYCG.-4ST_5JpX5oz75NHD95QEe0BfSKBc1h.NWs4DqcjiBJLjIgpDdcva; SCF=AjOJzMUpKNRc4sqxMp__70x4DbSoPaPY9rwsACWlPzjkvEkS3EhB7Foma3DglyzaOwFK7o4InHdSLeSNN0grEZA.; SUHB=0XDUe5Y3FggPHT; UOR=,,login.sina.com.cn; SINAGLOBAL=4189798176388.675.1528685080650',
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/11.1 Safari/605.1.15',
         'Referer': 'http://service.account.weibo.com/reportspamobile?rid=4238111540751113&type=2&from=20000',
         'Content-Length': '128',
