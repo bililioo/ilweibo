@@ -131,6 +131,10 @@ async def aip_report(*, isWeibo, **kw):
                     w = await models.weibo.find(index)
                     w.report = 1
                     await w.update()
+                elif database_name == 'pc_search':
+                    w = await models.pc_search.find(index)
+                    w.report = 1
+                    await w.update()
                 else: 
                     cw = await models.customWeibo.find(index)
                     cw.report = 1
