@@ -72,6 +72,7 @@ async def get_search(word):
 
             if len(url) > 0:
                 url = url[2:]
+                url = 'http://' + url
             text = re.sub(r'</?\w+[^>]*>', '', text)
 
             user = pic.get('user')
